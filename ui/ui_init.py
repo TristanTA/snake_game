@@ -1,55 +1,56 @@
 import pygame
 import sys
 
-from ui.map import draw_map
-from ui.snake import draw_snake
+from ui.map import Map
+from ui.snake import Snake
 
-def start_ui():
-    pygame.init()
+class GameState:
+    def __init__(self, WIDTH = 1200, HEIGHT = 600):
+        pygame.init()
+        self.window = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.map = Map(self.window)
+        self.snake = Snake()
+        self.clock = pygame.time.Clock()
 
-    WIDTH, HEIGHT = 1200, 600
-    window = pygame.display.set_mode((WIDTH, HEIGHT))
-    
-    clock = pygame.time.Clock()
+    def start_ui(self):
+        self.map.draw_map()
+        pygame.display.flip()
 
-    params = draw_map(window)
-    pygame.display.flip()
+        self.snake.draw_snake(self.map)
+        pygame.display.flip()
 
-    current_coord = draw_snake(window, params)
-    pygame.display.flip()
+        last_move_time = pygame.time.get_ticks()
 
-    last_move_time = pygame.time.get_ticks()
-    direction = 2
+        while True:
+            MOVE_DELAY = 150
+            now = pygame.time.get_ticks()
 
-    while True:
-        MOVE_DELAY = 150
-        now = pygame.time.get_ticks()
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        self.snake.direction = 1
+                    elif event.key == pygame.K_RIGHT:
+                        self.snake.direction = 2
+                    elif event.key == pygame.K_DOWN:
+                        self.snake.direction = 3
+                    elif event.key == pygame.K_LEFT:
+                        self.snake.direction = 4
             
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    direction = 1
-                elif event.key == pygame.K_RIGHT:
-                    direction = 2
-                elif event.key == pygame.K_DOWN:
-                    direction = 3
-                elif event.key == pygame.K_LEFT:
-                    direction = 4
-        
-        if now - last_move_time > MOVE_DELAY:
-            result = draw_snake(window, params, current_coord, direction)
-            if result == "GAME_OVER":
-                print("GAME OVER")
-                pygame.quit()
-                sys.exit()
-            else:
-                current_coord = result
+            if now - last_move_time > MOVE_DELAY:
+                self.map.draw_fruit(self.snake)
+                result = self.snake.draw_snake(self.map)
+                if result == "GAME_OVER":
+                    print("GAME OVER")
+                    pygame.quit()
+                    sys.exit()
+                else:
+                    self.snake.current_coord = result
 
-            last_move_time = now
+                last_move_time = now
 
-        pygame.display.update()
-        clock.tick(60)
+            pygame.display.update()
+            self.clock.tick(60)

@@ -1,9 +1,10 @@
 
 
-from ui.ui_init import start_ui
+from ui.ui_init import GameState
 
 def main():
-    start_ui()
+    game = GameState()
+    game.start_ui()
 
 if __name__ == "__main__":
     main()
