@@ -62,6 +62,7 @@ class SnakeUI:
         # Convert model input tensor to list of floats for display
         state_values = self.debug_info.get("state", None)
         action = self.debug_info.get("action", None)
+        reward = self.debug_info.get("reward", None)
 
         if state_values is not None:
             state_values = [float(v) for v in state_values.tolist()]
@@ -72,6 +73,8 @@ class SnakeUI:
             lines.append(f"Inputs: {state_values}")
         if action is not None:
             lines.append(f"Action: {action}")
+        if reward is not None:
+            lines.append(f"Reward: {reward}")
 
         # Render each line
         y = 5

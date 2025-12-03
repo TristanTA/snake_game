@@ -24,12 +24,13 @@ def watch_ai_play(model_path="snake_dqn_final.pth"):
         action = model.predict_action(state_tensor, epsilon=0.0)
 
         # Step the game
-        _, _, done = game.step(action, timestamp)
+        _, reward, done = game.step(action, timestamp)
 
         # >>> NEW: deliver debug info to UI
         ui.debug_info = {
             "state": state_tensor.cpu(),
-            "action": action
+            "action": action,
+            "reward": round(float(reward), 3)
         }
 
         ui.draw()

@@ -12,13 +12,13 @@ def train_ai():
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     buffer = ReplayBuffer(capacity=100_000)
 
-    gamma = 0.20
+    gamma = 0.50
     batch_size = 64
     num_episodes = 2000
 
     epsilon_start = 1.0
     epsilon_end = 0.05
-    epsilon_decay = num_episodes  # linear over episodes
+    epsilon_decay = num_episodes # linear over episodes
 
     for episode in range(num_episodes):
         game = CoreGame(30, 20)
