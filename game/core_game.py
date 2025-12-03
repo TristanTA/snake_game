@@ -11,8 +11,10 @@ class CoreGame:
     def reset(self):
         self.direction = 2  # 1=UP,2=RIGHT,3=DOWN,4=LEFT
         self.snake = [(0, 0)]
+        self.length = 1
         self.alive = True
         self.fruits = []
+        self.tick_since_fruit = 0
         self.target_fruit_count = 1
         self.last_distance = None
 
@@ -24,6 +26,7 @@ class CoreGame:
         return self.get_state()
 
     def step(self, action, timestamp_ms):
+        reward = 0
         if not self.alive:
             return self.get_state(), 0.0, True
 
@@ -33,17 +36,21 @@ class CoreGame:
         # --- death penalty ---
         if self._check_collisions():
             self.alive = False
-            reward = -50.0
+            reward -= 500.0
             return self.get_state(), reward, True
 
+        hx, hy = self.snake[-1]
+
         # --- eat fruit reward ---
+        length = len(self.snake)
+        reward += length
         ate = self._check_eat_fruit()
         if ate:
-            reward = 100.0
+            reward += (2 ** length)
+            self.tick_since_fruit = 0
         else:
-            reward = -2.0  # step penalty
-
-        hx, hy = self.snake[-1]
+            self.tick_since_fruit += 1
+            reward -= self.tick_since_fruit
 
         if self.fruits:
             fx, fy = min(self.fruits, key=lambda f: abs(f[0]-hx) + abs(f[1]-hy))
@@ -57,9 +64,9 @@ class CoreGame:
         # Distance shaping reward
         if self.last_distance is not None:
             if distance < self.last_distance:
-                reward += 3.0
+                reward += 4.0
             else:
-                reward -= 1.0
+                reward -= 6.0
 
         self.last_distance = distance
 
