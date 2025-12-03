@@ -35,6 +35,7 @@ class CoreGame:
 
         # --- death penalty ---
         if self._check_collisions():
+            reward -= 100
             self.alive = False
             return self.get_state(), reward, True
 
@@ -42,9 +43,10 @@ class CoreGame:
 
         # --- eat fruit reward ---
         length = len(self.snake)
+        reward += length * 2
         ate = self._check_eat_fruit()
         if ate:
-            reward += (2 ** length)
+            reward += (10 ** length)
             self.tick_since_fruit = 0
         else:
             self.tick_since_fruit += 1
@@ -62,13 +64,13 @@ class CoreGame:
         # Distance shaping reward
         if self.last_distance is not None:
             if distance < self.last_distance:
-                reward += 1.0 * length
+                reward += 10.0
             else:
                 reward -= self.tick_since_fruit / 10
 
-        if self.tick_since_fruit > 100:
+        if self.tick_since_fruit > 50:
             self.alive = False
-            reward -= 100
+            reward -= 10
             return self.get_state(), reward, True
 
         self.last_distance = distance
