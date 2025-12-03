@@ -12,7 +12,7 @@ def train_ai():
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     buffer = ReplayBuffer(capacity=100_000)
 
-    gamma = 0.99
+    gamma = 0.70
     batch_size = 64
     num_episodes = 2000
 

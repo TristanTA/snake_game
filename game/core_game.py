@@ -33,7 +33,7 @@ class CoreGame:
         # --- death penalty ---
         if self._check_collisions():
             self.alive = False
-            reward = -100.0
+            reward = -50.0
             return self.get_state(), reward, True
 
         # --- eat fruit reward ---
@@ -41,7 +41,7 @@ class CoreGame:
         if ate:
             reward = 100.0
         else:
-            reward = -1.0  # step penalty
+            reward = -2.0  # step penalty
 
         hx, hy = self.snake[-1]
 
@@ -59,7 +59,7 @@ class CoreGame:
             if distance < self.last_distance:
                 reward += 3.0
             else:
-                reward -= 3.0
+                reward -= 1.0
 
         self.last_distance = distance
 
