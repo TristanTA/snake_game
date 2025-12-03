@@ -22,6 +22,7 @@ class CoreGame:
         self.level_timer = 0
         self.level_up_delay = 10000  # ms
         self.last_timestamp = 0
+        self.life_span = 0
 
         return self.get_state()
 
@@ -32,53 +33,41 @@ class CoreGame:
 
         self._apply_action(action)
         self._move_snake()
+        if self.life_span > 500:
+            self.alive = False
+            return self.get_state(), reward, True
 
-        # --- death penalty ---
         if self._check_collisions():
-            reward -= 100
+            reward -= 10
             self.alive = False
             return self.get_state(), reward, True
 
         hx, hy = self.snake[-1]
-
-        # --- eat fruit reward ---
-        length = len(self.snake)
-        reward += length * 2
-        ate = self._check_eat_fruit()
-        if ate:
-            reward += (10 ** length)
-            self.tick_since_fruit = 0
-        else:
-            self.tick_since_fruit += 1
-            reward -= self.tick_since_fruit / 10
-
         if self.fruits:
             fx, fy = min(self.fruits, key=lambda f: abs(f[0]-hx) + abs(f[1]-hy))
         else:
             fx, fy = hx, hy
-
         dx_raw = fx - hx
         dy_raw = fy - hy
         distance = abs(dx_raw) + abs(dy_raw)
 
-        # Distance shaping reward
         if self.last_distance is not None:
             if distance < self.last_distance:
-                reward += 10.0
+                reward += 1
             else:
-                reward -= self.tick_since_fruit / 10
+                reward -= 2
 
-        if self.tick_since_fruit > 50:
-            self.alive = False
-            reward -= 10
-            return self.get_state(), reward, True
+        ate = self._check_eat_fruit()
+        if ate:
+            self.tick_since_fruit = 0
+        else:
+            self.tick_since_fruit += 1
 
         self.last_distance = distance
 
         self._update_fruit_spawn(timestamp_ms)
-
         self.steps += 1
-
+        self.life_span += 1
         return self.get_state(), reward, False
 
     def _apply_action(self, action):
