@@ -33,7 +33,7 @@ class CoreGame:
 
         self._apply_action(action)
         self._move_snake()
-        if self.life_span > 500:
+        if self.life_span > 50000000000:
             self.alive = False
             return self.get_state(), reward, True
 

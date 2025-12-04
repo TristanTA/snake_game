@@ -14,10 +14,10 @@ def train_ai():
 
     gamma = 0.50
     batch_size = 64
-    num_episodes = 2000
+    num_episodes = 3000
     epsilon_start = 1.0
     epsilon_end = 0.05
-    epsilon_decay = num_episodes # linear over episodes
+    epsilon_decay = num_episodes / 4 # linear over episodes
 
     for episode in range(num_episodes):
         game = CoreGame(30, 20)
