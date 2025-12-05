@@ -14,7 +14,7 @@ def train_ai():
 
     gamma = 0.50
     batch_size = 64
-    num_episodes = 3000
+    num_episodes = 4000
     epsilon_start = 1.0
     epsilon_end = 0.05
     epsilon_decay = num_episodes / 4 # linear over episodes
